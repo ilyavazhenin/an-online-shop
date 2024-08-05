@@ -1,5 +1,9 @@
 import App from './components/App.jsx'
 
-const app = <App />
+function createApp () {
+  const app = <App />;
+  return app;
+}
 
-export default app;
+
+export default createApp;

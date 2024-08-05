@@ -1,7 +1,12 @@
-import app from './app'; 
+import createApp from './app'; 
 
-/*
-we can choose active route here, some async ops to get data, etc...
-*/
+function createServerApp () {
+  console.log('here in entry server');
+  const app = createApp();
+  
+  // we can choose active route here, some async ops to get data, etc...
 
-export default app;
+  return app;
+}
+
+export default createServerApp;
