@@ -1,8 +1,8 @@
 import createApp from './app'; 
 
 function createServerApp () {
-  console.log('here in entry server');
   const app = createApp();
+  console.log('here in entry server');
   
   // we can choose active route here, some async ops to get data, etc...
 

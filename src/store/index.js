@@ -1,7 +1,11 @@
-import User from "./user";
+import User from './user';
 
-const rootStore = {
-  user: new User(),
+function createRootStore() {
+	const rootStore = {
+		user: new User(),
+	};
+
+	return rootStore;
 }
 
-export default rootStore;
+export default createRootStore;
