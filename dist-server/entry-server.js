@@ -4,7 +4,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 import { jsxs, jsx } from "react/jsx-runtime";
 import { observer } from "mobx-react";
 import { createContext, useState, useContext } from "react";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import axios from "axios";
 const storeContext = createContext(null);
 function App() {
@@ -22,10 +22,12 @@ function App() {
       }
     ),
     /* @__PURE__ */ jsx("hr", {}),
-    store.user.id
+    store.user.id,
+    /* @__PURE__ */ jsx("hr", {}),
+    store.catalog.products.length
   ] });
 }
-observer(App);
+const observedApp = observer(App);
 class User {
   constructor() {
     __publicField(this, "id", null);
@@ -33,9 +35,22 @@ class User {
     this.id = Math.random();
   }
 }
-function createRootStore() {
+class Catalog {
+  constructor(api) {
+    __publicField(this, "products", []);
+    makeAutoObservable(this);
+    this.api = api;
+  }
+  async load() {
+    const data = await this.api.getAll();
+    runInAction(() => this.products = data);
+    console.log(this.products.length, "length");
+  }
+}
+function createRootStore(api) {
   const rootStore = {
-    user: new User()
+    user: new User(),
+    catalog: new Catalog(api.products)
   };
   return rootStore;
 }
@@ -66,20 +81,16 @@ function createApi(http) {
     cart: createCartApi(http)
   };
 }
-function createApp() {
+async function createApp() {
   const http = createHttpPlugin("https://fakestoreapi.com/");
   const api = createApi(http);
-  const rootStore = createRootStore();
-  http.interceptors.request.use((config) => {
-    console.log("config in interceptor", 1);
-    return config;
-  });
-  api.products.getAll();
-  const app = /* @__PURE__ */ jsx(storeContext.Provider, { value: rootStore, children: /* @__PURE__ */ jsx(App, {}) });
+  const rootStore = createRootStore(api);
+  await rootStore.catalog.load();
+  const app = /* @__PURE__ */ jsx(storeContext.Provider, { value: rootStore, children: /* @__PURE__ */ jsx(observedApp, {}) });
   return app;
 }
-function createServerApp() {
-  const app = createApp();
+async function createServerApp() {
+  const app = await createApp();
   console.log("here in entry server");
   return app;
 }

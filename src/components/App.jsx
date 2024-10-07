@@ -18,10 +18,12 @@ function App() {
 			</button>
 			<hr />
 			{store.user.id}
+			<hr />
+			{store.catalog.products.length}
 		</div>
 	);
 }
 
 const observedApp = observer(App);
 
-export default App;
+export default observedApp;

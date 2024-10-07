@@ -8,8 +8,8 @@ const server = express();
 
 // server.use(express.static('dist'));
 
-server.get('*', function(_request, response) {
-  const app = createServerApp();
+server.get('*', async function(_request, response) {
+  const app = await createServerApp();
   const html = renderToString(app);
   const page = template.replace('<!--SSR-->', html);
   response.end(page);
